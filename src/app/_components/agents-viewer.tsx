@@ -3,9 +3,10 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronRight, X } from "lucide-react";
+import { Search, ChevronRight, X, Copy, Check } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
@@ -127,6 +128,7 @@ export default function AgentsViewer({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <CopyButton text={selectedAgent.content} />
                     <button
                       onClick={() => setSelectedAgent(null)}
                       className="p-2 text-muted-foreground hover:bg-secondary hover:text-foreground rounded-full transition-colors"
@@ -136,25 +138,45 @@ export default function AgentsViewer({
                   </div>
                 </div>
 
-                <div className="p-8 pb-32 overflow-y-auto custom-scrollbar flex-1 bg-background/20">
-                  <div className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl">
+                <div className="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-1 bg-background/20">
+                  <div className="prose prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl prose-p:leading-relaxed prose-p:my-2 prose-li:my-0.5">
                     <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
+                      remarkPlugins={[remarkGfm, remarkBreaks]}
                       rehypePlugins={[rehypeRaw]}
                       components={{
                         code({ className, children, ...rest }) {
                           const match = /language-(\w+)/.exec(className || "");
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           const styleStr = vscDarkPlus as any;
+
+                          const textContent = String(children).replace(
+                            /\n$/,
+                            "",
+                          );
+
                           return match ? (
-                            <SyntaxHighlighter
-                              PreTag="div"
-                              language={match[1]}
-                              style={styleStr}
-                              className="rounded-xl overflow-hidden shadow-sm my-6! text-sm"
-                            >
-                              {String(children).replace(/\n$/, "")}
-                            </SyntaxHighlighter>
+                            <div className="my-6 rounded-xl border border-white/10 bg-[#1e1e1e]">
+                              <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
+                                <span className="text-xs text-zinc-500 font-mono">
+                                  {match[1]}
+                                </span>
+                                <CopyButton text={textContent} />
+                              </div>
+                              <SyntaxHighlighter
+                                PreTag="div"
+                                language={match[1]}
+                                style={styleStr}
+                                customStyle={{
+                                  margin: 0,
+                                  padding: "1rem",
+                                  background: "transparent",
+                                }}
+                                wrapLongLines={true}
+                                className="text-sm"
+                              >
+                                {textContent}
+                              </SyntaxHighlighter>
+                            </div>
                           ) : (
                             <code {...rest} className={className}>
                               {children}
@@ -173,5 +195,33 @@ export default function AgentsViewer({
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="p-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-md border border-white/10 transition-colors shadow-sm"
+      title="Copy to clipboard"
+    >
+      {copied ? (
+        <Check className="w-3.5 h-3.5 text-green-400" />
+      ) : (
+        <Copy className="w-3.5 h-3.5" />
+      )}
+    </button>
   );
 }

@@ -94,7 +94,7 @@ export default function LinksViewer({
                       {link.title}
                     </h3>
                     <span className="text-[10px] text-muted-foreground mt-0.5">
-                      {new Date(link.createdAt).toLocaleDateString(undefined, {
+                      {new Date(link.createdAt).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",

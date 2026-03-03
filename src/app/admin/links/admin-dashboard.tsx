@@ -592,7 +592,8 @@ export default function AdminDashboard({
                     {skill.slug}.md
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Uploaded on {new Date(skill.createdAt).toLocaleDateString()}
+                    Uploaded on{" "}
+                    {new Date(skill.createdAt).toLocaleDateString("en-US")}
                   </p>
                 </div>
 
