@@ -335,12 +335,12 @@ export default function AdminDashboard({
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-sm text-zinc-400 hover:text-zinc-300 truncate block mt-1"
+                    className="text-sm text-zinc-400 hover:text-zinc-300 break-all block mt-1"
                   >
                     {link.url}
                   </a>
                   {link.description && (
-                    <p className="text-sm text-zinc-500 line-clamp-1 mt-1">
+                    <p className="text-sm text-zinc-500 line-clamp-2 mt-1">
                       {link.description}
                     </p>
                   )}

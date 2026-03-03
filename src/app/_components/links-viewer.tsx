@@ -90,17 +90,17 @@ export default function LinksViewer({
               <div className="flex justify-between items-center gap-4">
                 <div className="flex-1 min-w-0 pr-4">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <h3 className="text-base font-semibold text-foreground group-hover:text-muted-foreground transition-colors truncate">
+                    <h3 className="text-base font-semibold text-foreground group-hover:text-muted-foreground transition-colors break-words">
                       {link.title}
                     </h3>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-[10px] text-muted-foreground mt-0.5">
                       {new Date(link.createdAt).toLocaleDateString(undefined, {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
                       })}
                     </span>
-                    <div className="ml-auto flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-0.5 sm:ml-auto">
                       {link.category && (
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider bg-zinc-800 text-zinc-300 border border-zinc-700">
                           {link.category}
@@ -115,7 +115,7 @@ export default function LinksViewer({
                     </div>
                   </div>
                   {link.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-1 leading-relaxed">
+                    <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-1 leading-relaxed mt-1">
                       {link.description}
                     </p>
                   )}

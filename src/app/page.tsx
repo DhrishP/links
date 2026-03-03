@@ -25,12 +25,12 @@ export default async function Home() {
         <SquarePen className="w-4 h-4" />
       </Link>
 
-      <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-12 pb-6 overflow-hidden">
-        <header className="mb-8 shrink-0 text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-foreground">
+      <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-6 overflow-hidden">
+        <header className="mb-6 sm:mb-8 shrink-0 text-center">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-5xl text-foreground">
             Links
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground font-medium max-w-2xl mx-auto">
+          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground font-medium max-w-2xl mx-auto">
             A curated collection of interesting bookmarks, powerful tools, and
             modular agent skills.
           </p>
@@ -43,7 +43,7 @@ export default async function Home() {
 
         <footer className="mt-auto shrink-0 pt-6 border-t border-border/40 text-center">
           <p className="text-sm text-muted-foreground">
-            Bought to you by {" "}
+            Bought to you by{" "}
             <a
               href="https://curiouslymotivated.com"
               target="_blank"
