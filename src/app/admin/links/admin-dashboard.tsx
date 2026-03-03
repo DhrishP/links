@@ -11,6 +11,8 @@ import {
   Settings,
   FileText,
   Upload,
+  Loader2,
+  ChevronDown,
 } from "lucide-react";
 
 type LinkType = {
@@ -51,6 +53,36 @@ export default function AdminDashboard({
   const [isManualMode, setIsManualMode] = useState(false);
   const [manualSlug, setManualSlug] = useState("");
   const [rawContent, setRawContent] = useState("");
+  const [fetchingMetadata, setFetchingMetadata] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+
+  // Derive unique categories dynamically
+  const existingCategories = Array.from(
+    new Set(links.map((link) => link.category).filter(Boolean)),
+  ) as string[];
+
+  async function handleUrlBlur() {
+    if (!url || !url.startsWith("http")) return;
+
+    // Only auto-fill if title or desc are empty
+    if (title && description) return;
+
+    setFetchingMetadata(true);
+    try {
+      const res = await fetch(
+        `/api/fetch-metadata?url=${encodeURIComponent(url)}`,
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (!title && data.title) setTitle(data.title);
+        if (!description && data.description) setDescription(data.description);
+      }
+    } catch (err) {
+      console.error("Metadata auto-fetch failed:", err);
+    } finally {
+      setFetchingMetadata(false);
+    }
+  }
 
   async function handleSkillSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault();
@@ -217,14 +249,21 @@ export default function AdminDashboard({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-                URL
+              <label className="flex text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5 justify-between">
+                <span>URL</span>
+                {fetchingMetadata && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Loader2 className="w-3 h-3 animate-spin" /> Fetching
+                    info...
+                  </span>
+                )}
               </label>
               <input
                 required
                 type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
+                onBlur={handleUrlBlur}
                 className="w-full px-4 py-2 glass rounded-lg focus:ring-2 focus:ring-ring focus:border-ring transition-all outline-none"
                 placeholder="https://nextjs.org/docs"
               />
@@ -244,17 +283,50 @@ export default function AdminDashboard({
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
               Category (Optional)
             </label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-2 glass rounded-lg focus:ring-2 focus:ring-ring focus:border-ring transition-all outline-none"
-              placeholder="e.g. Tools, Articles, Videos"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                onFocus={() => setIsCategoryDropdownOpen(true)}
+                onBlur={() =>
+                  setTimeout(() => setIsCategoryDropdownOpen(false), 200)
+                }
+                className="w-full px-4 py-2 pr-10 glass rounded-lg focus:ring-2 focus:ring-ring focus:border-ring transition-all outline-none"
+                placeholder="e.g. Tools, Articles, Videos"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
+                }
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
+                tabIndex={-1}
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+            {isCategoryDropdownOpen && existingCategories.length > 0 && (
+              <ul className="absolute z-10 w-full mt-1 bg-zinc-900 border border-border rounded-lg shadow-lg max-h-48 overflow-auto py-1 animate-in fade-in slide-in-from-top-2">
+                {existingCategories.map((cat) => (
+                  <li
+                    key={cat}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // allow onBlur to fire AFTER this
+                      setCategory(cat);
+                      setIsCategoryDropdownOpen(false);
+                    }}
+                    className="px-4 py-2 text-sm text-foreground hover:bg-zinc-800 cursor-pointer transition-colors"
+                  >
+                    {cat}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="flex items-center gap-2 mt-4">
