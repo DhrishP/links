@@ -1,7 +1,140 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:is(.dark *));
+
+/* 2. Core Theme Tokens (Light Mode) */
 @theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+:root, .dark {
+  --background: oklch(0 0 0); /* Pure Black */
+  --foreground: oklch(0.98 0 0); /* Off White */
+  --card: oklch(0.15 0 0); /* Dark Grey */
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+
+  /* Minimalist monochrome */
+  --primary: oklch(0.98 0 0); /* Near White */
+  --primary-foreground: oklch(0 0 0); /* Black */
+
+  --secondary: oklch(0.15 0 0); /* Dark Grey */
+  --secondary-foreground: oklch(0.98 0 0); /* Off White */
+  --muted: oklch(0.15 0 0); /* Dark Grey */
+  --muted-foreground: oklch(0.65 0 0); /* Mid-Light Grey */
+  --accent: oklch(0.20 0 0); /* Mid Grey */
+  --accent-foreground: oklch(0.98 0 0); /* Near White */
+
+  --destructive: oklch(0.704 0.191 22.216);
+  --warning: oklch(0.769 0.188 70.08);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(1 0 0 / 25%);
+
+  /* Spacing & Radius System */
+  --spacing-section: 2rem;
+  --spacing-card: 1rem;
+  --spacing-inner: 0.75rem;
+  --radius-card: 0.5rem;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* 4. Base HTML/Body & Premium Utilities */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground overflow-x-hidden font-sans;
+  }
+}
+
+@layer utilities {
+  .text-page-title {
+    @apply text-xl font-semibold;
+  }
+  .text-section-header {
+    @apply text-sm font-medium;
+  }
+  .text-body {
+    @apply text-sm font-normal;
+  }
+  .text-label {
+    @apply text-xs font-medium;
+  }
+  .text-caption {
+    @apply text-xs font-normal;
+  }
+
+  /* Premium Glassmorphism - Ultra Minimal */
+  .glass {
+    @apply border border-white/10 bg-white/5 shadow-none backdrop-blur-xl;
+  }
+  .glass-card {
+    @apply bg-zinc-900/60 border border-white/5 hover:bg-zinc-800/80 backdrop-blur-md transition-all duration-300;
+  }
+
+  /* Custom Clean Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 hover:bg-muted-foreground/50 rounded-full transition-colors;
+  }
+}
+
+/* View Transition Wave Effect */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  /* Ensure the outgoing view (old theme) is beneath */
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  /* Ensure the incoming view (new theme) is always on top */
+  z-index: 1;
+  animation: reveal 0.4s ease-in-out forwards;
+}
+
+@keyframes reveal {
+  from {
+    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+    opacity: 0.7;
+  }
+  to {
+    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
+    opacity: 1;
+  }
 }
