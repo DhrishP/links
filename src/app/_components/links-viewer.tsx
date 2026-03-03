@@ -9,6 +9,7 @@ type LinkType = {
   url: string;
   description: string | null;
   category: string | null;
+  imageUrl?: string | null;
   isRecommended: boolean;
   createdAt: Date;
 };
@@ -23,16 +24,18 @@ export default function LinksViewer({
   const [filter, setFilter] = useState<"newest" | "recommended">("newest");
 
   const filteredLinks = links.filter((link) => {
+    const searchTerm = search.toLowerCase();
     const matchesSearch =
-      link.title.toLowerCase().includes(search.toLowerCase()) ||
-      link.description?.toLowerCase().includes(search.toLowerCase()) ||
+      link.title.toLowerCase().includes(searchTerm) ||
+      link.description?.toLowerCase().includes(searchTerm) ||
+      link.category?.toLowerCase().includes(searchTerm) ||
       false;
     const matchesFilter = filter === "recommended" ? link.isRecommended : true;
     return matchesSearch && matchesFilter;
   });
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-8 space-y-6">
+    <div className="w-full max-w-3xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="relative w-full sm:w-2/3">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -40,20 +43,20 @@ export default function LinksViewer({
           </div>
           <input
             type="text"
-            className="block w-full pl-11 pr-4 py-2.5 border border-zinc-200/80 dark:border-zinc-800/80 rounded-xl leading-5 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 text-base shadow-sm transition-all"
+            className="block w-full pl-11 pr-4 py-2.5 glass rounded-xl leading-5 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-base transition-all"
             placeholder="Search resources..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        <div className="flex rounded-lg shadow-sm w-full sm:w-auto p-1 bg-zinc-100 dark:bg-zinc-800">
+        <div className="flex rounded-lg shadow-sm w-full sm:w-auto p-1 bg-secondary border border-border">
           <button
             onClick={() => setFilter("newest")}
             className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
               filter === "newest"
-                ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                ? "bg-background text-foreground shadow-sm border border-border"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Newest
@@ -62,11 +65,14 @@ export default function LinksViewer({
             onClick={() => setFilter("recommended")}
             className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-1.5 ${
               filter === "recommended"
-                ? "bg-white dark:bg-zinc-700 text-amber-600 dark:text-amber-500 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                ? "bg-background text-foreground shadow-sm border border-border"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Star className="w-3.5 h-3.5" /> Recommended
+            <Star
+              className={`w-3.5 h-3.5 ${filter === "recommended" ? "text-yellow-500 fill-yellow-500" : ""}`}
+            />{" "}
+            Recommended
           </button>
         </div>
       </div>
@@ -79,50 +85,61 @@ export default function LinksViewer({
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 hover:border-blue-400/50 dark:hover:border-blue-500/50 group"
+              className="block glass-card rounded-2xl px-5 py-3.5 group relative overflow-hidden"
             >
-              <div className="flex justify-between items-start">
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <div className="flex justify-between items-center gap-4">
+                <div className="flex-1 min-w-0 pr-4">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <h3 className="text-base font-semibold text-foreground group-hover:text-muted-foreground transition-colors truncate">
                       {link.title}
                     </h3>
-                    {link.isRecommended && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100/50 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200/50 dark:border-amber-800/50 backdrop-blur-md">
-                        <Star className="w-3 h-3 mr-1 fill-current" />{" "}
-                        Recommended
-                      </span>
-                    )}
+                    <span className="text-[10px] text-muted-foreground">
+                      {new Date(link.createdAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <div className="ml-auto flex items-center gap-2">
+                      {link.category && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider bg-zinc-800 text-zinc-300 border border-zinc-700">
+                          {link.category}
+                        </span>
+                      )}
+                      {link.isRecommended && (
+                        <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-widest bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                          <Star className="w-2.5 h-2.5 mr-1 fill-yellow-500 text-yellow-500" />
+                          Recommended
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {link.description && (
-                    <p className="text-base text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                    <p className="text-sm text-muted-foreground line-clamp-1 leading-relaxed">
                       {link.description}
                     </p>
                   )}
-                  <div className="flex items-center gap-3 mt-4 text-xs font-medium text-zinc-400 dark:text-zinc-500">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {new Date(link.createdAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </span>
-                    {link.category && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-                        {link.category}
-                      </span>
-                    )}
-                  </div>
                 </div>
-                <div className="text-blue-500 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out">
-                  <ExternalLink className="w-5 h-5" />
+
+                {link.imageUrl && (
+                  <div className="shrink-0 w-12 h-12 hidden sm:block relative rounded-xl overflow-hidden border border-white/5 opacity-80 group-hover:opacity-100 transition-opacity">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={link.imageUrl}
+                      alt={link.title}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+
+                <div className="absolute top-4 right-4 text-foreground opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out">
+                  <ExternalLink className="w-4 h-4" />
                 </div>
               </div>
             </a>
           ))
         ) : (
-          <div className="py-16 text-center text-zinc-500 bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700">
+          <div className="py-16 text-center text-muted-foreground glass rounded-2xl">
             <p className="text-lg font-medium">No links found</p>
             <p className="text-sm mt-1">
               Try adjusting your filters or search query.
