@@ -14,8 +14,8 @@ export default function ClientTabs({
   const [activeTab, setActiveTab] = useState<"links" | "agents">("links");
 
   return (
-    <div className="flex flex-col items-center w-full">
-      <div className="relative flex p-1.5 space-x-1 bg-zinc-100/80 dark:bg-zinc-800/50 backdrop-blur-md rounded-2xl mb-12 w-full max-w-sm mx-auto shadow-inner border border-white/20 dark:border-zinc-700/50">
+    <div className="flex-1 flex flex-col min-h-0 items-center w-full">
+      <div className="relative shrink-0 flex p-1.5 space-x-1 glass rounded-2xl mb-8 w-full max-w-sm mx-auto z-10">
         {[
           { id: "links", label: "Links", icon: LinkIcon },
           { id: "agents", label: "Agent Skills", icon: Cpu },
@@ -29,14 +29,14 @@ export default function ClientTabs({
               onClick={() => setActiveTab(tab.id as "links" | "agents")}
               className={`relative flex items-center justify-center w-full py-2.5 text-sm font-medium rounded-xl transition-colors duration-300 z-10 ${
                 isActive
-                  ? "text-blue-700 dark:text-blue-300"
-                  : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="active-tab-indicator"
-                  className="absolute inset-0 bg-white dark:bg-zinc-700 rounded-xl shadow-sm border border-black/4 dark:border-white/4"
+                  className="absolute inset-0 bg-background rounded-xl border border-border shadow-sm"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                 />
               )}
@@ -53,7 +53,7 @@ export default function ClientTabs({
         })}
       </div>
 
-      <div className="w-full relative min-h-[500px]">
+      <div className="w-full flex-1 min-h-0 relative overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -61,7 +61,7 @@ export default function ClientTabs({
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full absolute top-0 left-0"
+            className="w-full h-full absolute top-0 left-0 overflow-y-auto overflow-x-hidden pb-8"
           >
             {activeTab === "links" ? linksComponent : agentsComponent}
           </motion.div>
