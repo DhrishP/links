@@ -33,7 +33,7 @@ export default async function Home() {
 
         <footer className="mt-auto shrink-0 pt-6 border-t border-border/40 text-center">
           <p className="text-sm text-muted-foreground">
-            Bought to you by{" "}
+            Curated by{" "}
             <a
               href="https://curiouslymotivated.com"
               target="_blank"
