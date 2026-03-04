@@ -46,7 +46,7 @@ export default function LinksViewer({
           <input
             type="text"
             className="block w-full pl-11 pr-4 py-2.5 glass rounded-xl leading-5 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-base transition-all"
-            placeholder="Search resources..."
+            placeholder="Search resources, even categories..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
