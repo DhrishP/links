@@ -18,11 +18,12 @@ export async function PATCH(
     const body = await req.json();
 
     // Omit fields we don't want updated directly
-    const { title, url, description, category, isRecommended } = body;
+    const { title, url, description, category, category2, isRecommended } =
+      body;
 
     const [updatedLink] = await db
       .update(links)
-      .set({ title, url, description, category, isRecommended })
+      .set({ title, url, description, category, category2, isRecommended })
       .where(eq(links.id, parseInt(id, 10)))
       .returning();
 

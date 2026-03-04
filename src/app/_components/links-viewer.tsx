@@ -9,6 +9,7 @@ type LinkType = {
   url: string;
   description: string | null;
   category: string | null;
+  category2: string | null;
   imageUrl?: string | null;
   isRecommended: boolean;
   createdAt: Date;
@@ -29,6 +30,7 @@ export default function LinksViewer({
       link.title.toLowerCase().includes(searchTerm) ||
       link.description?.toLowerCase().includes(searchTerm) ||
       link.category?.toLowerCase().includes(searchTerm) ||
+      link.category2?.toLowerCase().includes(searchTerm) ||
       false;
     const matchesFilter = filter === "recommended" ? link.isRecommended : true;
     return matchesSearch && matchesFilter;
@@ -106,6 +108,11 @@ export default function LinksViewer({
                           {link.category}
                         </span>
                       )}
+                      {link.category2 && (
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-wider bg-zinc-800 text-zinc-300 border border-zinc-700">
+                          {link.category2}
+                        </span>
+                      )}
                       {link.isRecommended && (
                         <span className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] uppercase font-bold tracking-widest bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
                           <Star className="w-2.5 h-2.5 mr-1 fill-yellow-500 text-yellow-500" />
@@ -115,9 +122,11 @@ export default function LinksViewer({
                     </div>
                   </div>
                   {link.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-1 leading-relaxed mt-1">
-                      {link.description}
-                    </p>
+                    <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-300 ease-in-out">
+                      <p className="text-sm text-muted-foreground overflow-hidden leading-relaxed mt-1">
+                        {link.description}
+                      </p>
+                    </div>
                   )}
                 </div>
 

@@ -21,6 +21,7 @@ type LinkType = {
   url: string;
   description: string | null;
   category: string | null;
+  category2: string | null;
   isRecommended: boolean;
 };
 
@@ -44,6 +45,7 @@ export default function AdminDashboard({
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [category2, setCategory2] = useState("");
   const [isRecommended, setIsRecommended] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -55,10 +57,13 @@ export default function AdminDashboard({
   const [rawContent, setRawContent] = useState("");
   const [fetchingMetadata, setFetchingMetadata] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const [isCategory2DropdownOpen, setIsCategory2DropdownOpen] = useState(false);
 
   // Derive unique categories dynamically
   const existingCategories = Array.from(
-    new Set(links.map((link) => link.category).filter(Boolean)),
+    new Set(
+      links.flatMap((link) => [link.category, link.category2]).filter(Boolean),
+    ),
   ) as string[];
 
   async function handleUrlBlur() {
@@ -169,6 +174,7 @@ export default function AdminDashboard({
             url,
             description,
             category,
+            category2,
             isRecommended,
           }),
         });
@@ -182,6 +188,7 @@ export default function AdminDashboard({
             url,
             description,
             category,
+            category2,
             isRecommended,
           }),
         });
@@ -200,6 +207,7 @@ export default function AdminDashboard({
     setUrl(link.url);
     setDescription(link.description || "");
     setCategory(link.category || "");
+    setCategory2(link.category2 || "");
     setIsRecommended(link.isRecommended);
     setEditingId(link.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -210,6 +218,7 @@ export default function AdminDashboard({
     setUrl("");
     setDescription("");
     setCategory("");
+    setCategory2("");
     setIsRecommended(false);
     setEditingId(null);
   }
@@ -319,6 +328,52 @@ export default function AdminDashboard({
                       e.preventDefault(); // allow onBlur to fire AFTER this
                       setCategory(cat);
                       setIsCategoryDropdownOpen(false);
+                    }}
+                    className="px-4 py-2 text-sm text-foreground hover:bg-zinc-800 cursor-pointer transition-colors"
+                  >
+                    {cat}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="relative">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+              Category 2 (Optional)
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={category2}
+                onChange={(e) => setCategory2(e.target.value)}
+                onFocus={() => setIsCategory2DropdownOpen(true)}
+                onBlur={() =>
+                  setTimeout(() => setIsCategory2DropdownOpen(false), 200)
+                }
+                className="w-full px-4 py-2 pr-10 glass rounded-lg focus:ring-2 focus:ring-ring focus:border-ring transition-all outline-none"
+                placeholder="e.g. Tools, Articles, Videos"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setIsCategory2DropdownOpen(!isCategory2DropdownOpen)
+                }
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
+                tabIndex={-1}
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+            {isCategory2DropdownOpen && existingCategories.length > 0 && (
+              <ul className="absolute z-10 w-full mt-1 bg-zinc-900 border border-border rounded-lg shadow-lg max-h-48 overflow-auto py-1 animate-in fade-in slide-in-from-top-2">
+                {existingCategories.map((cat) => (
+                  <li
+                    key={cat}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setCategory2(cat);
+                      setIsCategory2DropdownOpen(false);
                     }}
                     className="px-4 py-2 text-sm text-foreground hover:bg-zinc-800 cursor-pointer transition-colors"
                   >

@@ -13,6 +13,7 @@ export const links = pgTable("links", {
   url: text("url").notNull(),
   description: text("description"),
   category: varchar("category", { length: 255 }),
+  category2: varchar("category2", { length: 255 }),
   imageUrl: text("image_url"),
   isRecommended: boolean("is_recommended").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

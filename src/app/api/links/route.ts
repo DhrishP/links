@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, url, description, category, isRecommended } = body;
+    const { title, url, description, category, category2, isRecommended } =
+      body;
 
     if (!title || !url) {
       return NextResponse.json(
@@ -81,6 +82,7 @@ export async function POST(req: NextRequest) {
         url,
         description,
         category,
+        category2,
         imageUrl,
         isRecommended: isRecommended || false,
       })
