@@ -21,7 +21,7 @@ export default function ClientTabs({
         </h1>
         <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground font-medium max-w-2xl mx-auto transition-colors duration-300">
           {activeTab === "links"
-            ? "A curated collection of interesting bookmarks, powerful tools, and resources."
+            ? "A curated collection of interesting bookmarks, powerful tools, and resources collected during my time on the internet."
             : "A collection of modular agent skills, system prompts, and AI instructions."}
         </p>
       </header>
