@@ -122,7 +122,7 @@ export default function LinksViewer({
                     </div>
                   </div>
                   {link.description && (
-                    <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-300 ease-in-out">
+                    <div className="grid grid-rows-[1fr] sm:grid-rows-[0fr] sm:group-hover:grid-rows-[1fr] transition-all duration-300 ease-in-out">
                       <p className="text-sm text-muted-foreground overflow-hidden leading-relaxed mt-1">
                         {link.description}
                       </p>
